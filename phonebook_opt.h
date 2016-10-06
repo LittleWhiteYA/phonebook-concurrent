@@ -5,6 +5,7 @@
 #include <time.h>
 
 #define MAX_LAST_NAME_SIZE 16
+#define THREAD_NUM 4
 
 #define OPT 1
 
@@ -34,15 +35,14 @@ typedef struct _append_a {
     char *ptr;
     char *eptr;
     int tid;
-    int nthread;
     entry *entryStart;
     entry *pHead;
     entry *pLast;
 } append_a;
 
-append_a *new_append_a(char *ptr, char *eptr, int tid, int ntd, entry *start);
+append_a *new_append_a(char *ptr, char *eptr, int tid, entry *start);
 
-void append(void *arg);
+void *append(void *arg);
 
 void show_entry(entry *pHead);
 

@@ -26,22 +26,20 @@ entry *findName(char lastname[], entry *pHead)
     return NULL;
 }
 
-append_a *new_append_a(char *ptr, char *eptr, int tid, int ntd,
-                       entry *start)
+append_a *new_append_a(char *ptr, char *eptr, int tid, entry *start)
 {
     append_a *app = (append_a *) malloc(sizeof(append_a));
 
     app->ptr = ptr;
     app->eptr = eptr;
     app->tid = tid;
-    app->nthread = ntd;
     app->entryStart = start;
 
     app->pHead = (app->pLast = app->entryStart);
     return app;
 }
 
-void append(void *arg)
+void *append(void *arg)
 {
     struct timespec start, end;
     double cpu_time;
@@ -52,9 +50,8 @@ void append(void *arg)
 
     int count = 0;
     entry *j = app->entryStart;
-    for (char *i = app->ptr; i < app->eptr;
-            i += MAX_LAST_NAME_SIZE * app->nthread,
-            j += app->nthread,count++) {
+    for(char *i = app->ptr; i < app->eptr;
+        i+= MAX_LAST_NAME_SIZE * THREAD_NUM, j += THREAD_NUM, ++count) {
         app->pLast->pNext = j;
         app->pLast = app->pLast->pNext;
 
@@ -63,6 +60,7 @@ void append(void *arg)
                 app->tid, app->pLast->lastName);
         app->pLast->pNext = NULL;
     }
+
     clock_gettime(CLOCK_REALTIME, &end);
     cpu_time = diff_in_second(start, end);
 
